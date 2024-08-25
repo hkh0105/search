@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: record-search
+  labels:
+    app: record-search
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: record-search
+  template:
+    metadata:
+      labels:
+        app: record-search
+    spec:
+      containers:
+        - name: record-search
+          image: "username/record-search:latest"
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 10
+          livenessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 120
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 5
